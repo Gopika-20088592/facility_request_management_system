@@ -7,18 +7,20 @@
 
     <h1>Create Facility Request</h1>
 
-    <form>
+    <form id="requestForm">
 
         <label>Employee Name</label>
-        <br>
-        <input type="text" placeholder="Enter your name">
+        <input type="text" id="employeeName" placeholder="Enter your name">
+
+        <label style="margin-left: 30px;">Employee ID</label>
+        <input type="text" id="employeeId" placeholder="Enter your employee ID">
 
         <br><br>
 
         <label>Floor</label>
         <br>
-        <select>
-            <option>Select Floor</option>
+        <select id="floor">
+            <option value="">Select Floor</option>
             <option>Floor 1</option>
             <option>Floor 2</option>
             <option>Floor 3</option>
@@ -28,8 +30,8 @@
 
         <label>Pantry Location</label>
         <br>
-        <select>
-            <option>Select Pantry</option>
+        <select id="pantry">
+            <option value="">Select Pantry</option>
             <option>Pantry A</option>
             <option>Pantry B</option>
             <option>Pantry C</option>
@@ -39,8 +41,8 @@
 
         <label>Issue Type</label>
         <br>
-        <select>
-            <option>Select Issue</option>
+        <select id="issueType">
+            <option value="">Select Issue</option>
             <option>Tea/Coffee Refill</option>
             <option>Milk Refill</option>
             <option>Sugar Refill</option>
@@ -53,16 +55,19 @@
 
         <label>Description</label>
         <br>
-        <textarea rows="4" cols="40" placeholder="Describe the issue"></textarea>
+        <textarea id="description" rows="4" cols="40" placeholder="Describe the issue"></textarea>
 
         <br><br>
 
-        <button>Submit Request</button>
+        <button type="submit">Submit Request</button>
 
     </form>
 
     <br>
+
     <a href="index.html">Back to Home</a>
+
+    <!-- Link to JS -->
     <script src="javascript/create_request.js"></script>
 
 </body>
