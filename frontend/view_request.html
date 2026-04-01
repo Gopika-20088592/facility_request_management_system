@@ -31,12 +31,18 @@
                         <p><strong>Issue Type:</strong> ${request.issueType}</p>
                         <p><strong>Description:</strong> ${request.description}</p>
 
+                        <button onclick="editRequest(${index})">Edit</button>
                         <button onclick="deleteRequest(${index})">Delete</button>
                     </div>
                 `;
             });
 
             requestList.innerHTML = output;
+        }
+        function editRequest(index) 
+        {
+            localStorage.setItem("editIndex", index);
+            window.location.href = "create_request.html";
         }
         function deleteRequest(index) 
         {
