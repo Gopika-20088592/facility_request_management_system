@@ -25,15 +25,18 @@ if (requests.length === 0) {
 
     requestList.innerHTML = output;
 }
+
 function editRequest(index) 
 {
     localStorage.setItem("editIndex", index);
     window.location.href = "create_request.html";
 }
-function deleteRequest(index) {
+function deleteRequest(index) 
+{
     let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
 
-    if (confirm("Are you sure you want to delete this request?")) {
+    if (confirm("Are you sure you want to delete this request?")) 
+    {
         requests.splice(index, 1);
         localStorage.setItem("facilityRequests", JSON.stringify(requests));
         alert("Request deleted successfully!");
@@ -41,7 +44,3 @@ function deleteRequest(index) {
     }
 }
 
-function editRequest(index) {
-    localStorage.setItem("editIndex", index);
-    window.location.href = "create_request.html";
-}
