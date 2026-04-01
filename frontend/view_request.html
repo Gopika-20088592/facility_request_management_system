@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Requests</title>
+</head>
+<body>
+    <h1>Submitted Requests</h1>
+
+    <div id="requestList"></div>
+
+    <br>
+    <a href="index.html">Back to Home</a>
+
+    <script>
+        const requestList = document.getElementById("requestList");
+        const requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
+
+        if (requests.length === 0) {
+            requestList.innerHTML = "<p>No requests submitted yet.</p>";
+        } else {
+            let output = "";
+
+            requests.forEach(function(request, index) {
+                output += `
+                    <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+                        <p><strong>Request Number:</strong> ${index + 1}</p>
+                        <p><strong>Employee Name:</strong> ${request.employeeName}</p>
+                        <p><strong>Employee ID:</strong> ${request.employeeId}</p>
+                        <p><strong>Floor:</strong> ${request.floor}</p>
+                        <p><strong>Pantry:</strong> ${request.pantry}</p>
+                        <p><strong>Issue Type:</strong> ${request.issueType}</p>
+                        <p><strong>Description:</strong> ${request.description}</p>
+                    </div>
+                `;
+            });
+
+            requestList.innerHTML = output;
+        }
+    </script>
+</body>
+</html>
