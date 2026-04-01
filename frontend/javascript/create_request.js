@@ -1,7 +1,6 @@
 const form = document.getElementById("requestForm");
 
 form.addEventListener("submit", function(event) {
-
     event.preventDefault();
 
     const name = document.getElementById("employeeName").value;
@@ -11,13 +10,22 @@ form.addEventListener("submit", function(event) {
     const issue = document.getElementById("issueType").value;
     const description = document.getElementById("description").value;
 
-    alert(
-        "Employee Name: " + name +
-        "\nEmployee ID: " + employeeId +
-        "\nFloor: " + floor +
-        "\nPantry: " + pantry +
-        "\nIssue Type: " + issue +
-        "\nDescription: " + description
-    );
+    const requestData = {
+        employeeName: name,
+        employeeId: employeeId,
+        floor: floor,
+        pantry: pantry,
+        issueType: issue,
+        description: description
+    };
 
+    let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
+
+    requests.push(requestData);
+
+    localStorage.setItem("facilityRequests", JSON.stringify(requests));
+
+    alert("Request submitted successfully!");
+
+    form.reset();
 });
