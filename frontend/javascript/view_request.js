@@ -9,13 +9,15 @@ if (requests.length === 0) {
     requests.forEach(function(request, index) {
         output += `
             <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
-                <p><strong>Request Number:</strong> ${index + 1}</p>
+                <p><strong>Request ID:</strong> ${request.requestId}</p>
                 <p><strong>Employee Name:</strong> ${request.employeeName}</p>
                 <p><strong>Employee ID:</strong> ${request.employeeId}</p>
                 <p><strong>Floor:</strong> ${request.floor}</p>
                 <p><strong>Pantry:</strong> ${request.pantry}</p>
                 <p><strong>Issue Type:</strong> ${request.issueType}</p>
                 <p><strong>Description:</strong> ${request.description}</p>
+                <p><strong>Status:</strong> ${request.status}</p>
+                <p><strong>Submitted At:</strong> ${request.submittedAt}</p>
 
                 <button onclick="editRequest(${index})">Edit</button>
                 <button onclick="deleteRequest(${index})">Delete</button>
@@ -26,17 +28,10 @@ if (requests.length === 0) {
     requestList.innerHTML = output;
 }
 
-function editRequest(index) 
-{
-    localStorage.setItem("editIndex", index);
-    window.location.href = "create_request.html";
-}
-function deleteRequest(index) 
-{
+function deleteRequest(index) {
     let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
 
-    if (confirm("Are you sure you want to delete this request?")) 
-    {
+    if (confirm("Are you sure you want to delete this request?")) {
         requests.splice(index, 1);
         localStorage.setItem("facilityRequests", JSON.stringify(requests));
         alert("Request deleted successfully!");
@@ -44,3 +39,7 @@ function deleteRequest(index)
     }
 }
 
+function editRequest(index) {
+    localStorage.setItem("editIndex", index);
+    window.location.href = "create_request.html";
+}

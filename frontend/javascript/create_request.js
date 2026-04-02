@@ -27,7 +27,14 @@ form.addEventListener("submit", function(event) {
     const issueType = document.getElementById("issueType").value;
     const description = document.getElementById("description").value.trim();
 
-    if (name === "" || employeeId === "" || floor === "" || pantry === "" || issueType === "" || description === "") {
+    if (
+        name === "" ||
+        employeeId === "" ||
+        floor === "" ||
+        pantry === "" ||
+        issueType === "" ||
+        description === ""
+    ) {
         alert("Please fill in all fields before submitting the request.");
         return;
     }
@@ -46,7 +53,9 @@ form.addEventListener("submit", function(event) {
             issueType: issueType,
             description: description,
             submittedAt: oldRequest.submittedAt,
-            status: oldRequest.status
+            status: oldRequest.status,
+            comment: oldRequest.comment ? oldRequest.comment : "",
+            deleteReason: oldRequest.deleteReason ? oldRequest.deleteReason : ""
         };
     } else {
         const requestId = "REQ" + String(requests.length + 1).padStart(3, "0");
@@ -61,21 +70,20 @@ form.addEventListener("submit", function(event) {
             issueType: issueType,
             description: description,
             submittedAt: submittedAt,
-            status: "New"
+            status: "New",
+            comment: "",
+            deleteReason: ""
         };
     }
 
     const detailsMessage =
         "Please verify your request details:\n\n" +
-        "Request ID: " + requestData.requestId +
-        "\nEmployee Name: " + requestData.employeeName +
-        "\nEmployee ID: " + requestData.employeeId +
-        "\nFloor: " + requestData.floor +
-        "\nPantry: " + requestData.pantry +
-        "\nIssue Type: " + requestData.issueType +
-        "\nDescription: " + requestData.description +
-        "\nStatus: " + requestData.status +
-        "\nSubmitted At: " + requestData.submittedAt +
+        "Employee Name: " + name +
+        "\nEmployee ID: " + employeeId +
+        "\nFloor: " + floor +
+        "\nPantry: " + pantry +
+        "\nIssue Type: " + issueType +
+        "\nDescription: " + description +
         "\n\nClick OK to confirm or Cancel to edit.";
 
     const isConfirmed = confirm(detailsMessage);
@@ -96,7 +104,12 @@ form.addEventListener("submit", function(event) {
         requests.push(requestData);
         localStorage.setItem("facilityRequests", JSON.stringify(requests));
 
-        alert("Request submitted successfully!");
+        alert(
+            "Your request has been submitted successfully!\n\n" +
+            "Request ID: " + requestData.requestId +
+            "\n\nPlease use this ID for future follow-up."
+        );
+
         form.reset();
         window.location.href = "index.html";
     }
