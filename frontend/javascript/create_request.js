@@ -3,7 +3,6 @@ const form = document.getElementById("requestForm");
 let editIndex = localStorage.getItem("editIndex");
 let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
 
-// If editing, fill the form with existing request data
 if (editIndex !== null) {
     const request = requests[editIndex];
 
