@@ -1,68 +1,203 @@
 const requestList = document.getElementById("requestList");
-let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
+const searchInput = document.getElementById("searchInput");
 
-function displayRequests() {
-    if (requests.length === 0) {
-        requestList.innerHTML = "<p>No requests submitted yet.</p>";
+let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
+let currentFilter = "All";
+let statusChartInstance = null;
+
+function updateDashboardStats() {
+    const total = requests.length;
+    const newCount = requests.filter(request => request.status === "New").length;
+    const inProgressCount = requests.filter(request => request.status === "In Progress").length;
+    const resolvedCount = requests.filter(request => request.status === "Resolved").length;
+    const deletedCount = requests.filter(request => request.status === "Deleted").length;
+
+    document.getElementById("totalRequests").textContent = total;
+    document.getElementById("newRequests").textContent = newCount;
+    document.getElementById("inProgressRequests").textContent = inProgressCount;
+    document.getElementById("resolvedRequests").textContent = resolvedCount;
+    document.getElementById("deletedRequests").textContent = deletedCount;
+
+    createStatusChart(newCount, inProgressCount, resolvedCount, deletedCount);
+}
+
+function createStatusChart(newCount, inProgressCount, resolvedCount, deletedCount) {
+    const ctx = document.getElementById("statusChart").getContext("2d");
+
+    if (statusChartInstance) {
+        statusChartInstance.destroy();
+    }
+
+    statusChartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["New", "In Progress", "Resolved", "Deleted"],
+            datasets: [{
+                label: "Tickets",
+                data: [newCount, inProgressCount, resolvedCount, deletedCount]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
+
+function getFilteredRequests() {
+    let filteredRequests = requests;
+
+    if (currentFilter !== "All") {
+        filteredRequests = filteredRequests.filter(request => request.status === currentFilter);
+    }
+
+    const searchValue = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+    if (searchValue !== "") {
+        filteredRequests = filteredRequests.filter(request =>
+            (request.requestId && request.requestId.toLowerCase().includes(searchValue)) ||
+            (request.employeeName && request.employeeName.toLowerCase().includes(searchValue)) ||
+            (request.employeeId && request.employeeId.toLowerCase().includes(searchValue)) ||
+            (request.issueType && request.issueType.toLowerCase().includes(searchValue))
+        );
+    }
+
+    return filteredRequests;
+}
+
+function getStatusClass(status) {
+    if (status === "New") return "status-new";
+    if (status === "In Progress") return "status-progress";
+    if (status === "Resolved") return "status-resolved";
+    if (status === "Deleted") return "status-deleted";
+    return "";
+}
+
+function displayRequests(data) {
+    if (data.length === 0) {
+        requestList.innerHTML = "<p>No matching requests found.</p>";
         return;
     }
 
     let output = "";
 
-    requests.forEach(function(request, index) {
+    data.forEach(function(request) {
+        const originalIndex = requests.findIndex(r => r.requestId === request.requestId);
+        const statusClass = getStatusClass(request.status);
+
         output += `
-            <div style="border:1px solid black; padding:15px; margin-bottom:15px;">
-                <h3>Ticket Dashboard</h3>
-                <p><strong>Request ID:</strong> ${request.requestId}</p>
-                <p><strong>Submitted At:</strong> ${request.submittedAt}</p>
-                <p><strong>Status:</strong> ${request.status}</p>
+            <div class="card request-summary">
+                <p><strong>Request ID:</strong> ${request.requestId ? request.requestId : "N/A"}</p>
+                <p><strong>Submitted At:</strong> ${request.submittedAt ? request.submittedAt : "N/A"}</p>
+                <p><strong>Status:</strong> <span class="status-text ${statusClass}">${request.status ? request.status : "New"}</span></p>
 
-                <button onclick="toggleDetails(${index})">Open Request</button>
+                <button onclick="toggleDetails(${originalIndex})">Open Request</button>
 
-                <div id="details-${index}" style="display:none; margin-top:15px; border-top:1px solid #ccc; padding-top:15px;">
+                <div id="details-${originalIndex}" class="request-details" style="display:none;">
                     <p><strong>Employee Name:</strong> ${request.employeeName}</p>
                     <p><strong>Employee ID:</strong> ${request.employeeId}</p>
                     <p><strong>Floor:</strong> ${request.floor}</p>
                     <p><strong>Pantry:</strong> ${request.pantry}</p>
                     <p><strong>Issue Type:</strong> ${request.issueType}</p>
                     <p><strong>Description:</strong> ${request.description}</p>
+                    <p><strong>Assigned To:</strong> ${request.assignedTo ? request.assignedTo : "Not assigned yet"}</p>
                     <p><strong>Facility Comment / Action Taken:</strong> ${request.comment ? request.comment : "No comments yet"}</p>
                     <p><strong>Delete Reason:</strong> ${request.deleteReason ? request.deleteReason : "Not deleted"}</p>
 
-                    <br>
+                    <div class="inline-field">
+                        <label for="assignedTo-${originalIndex}"><strong>Assign To:</strong></label>
+                        <input type="text" id="assignedTo-${originalIndex}" value="${request.assignedTo ? request.assignedTo : ""}" ${request.status === "Deleted" ? "disabled" : ""}>
+                    </div>
 
-                    <label for="status-${index}"><strong>Change Status:</strong></label><br>
-                    <select id="status-${index}" ${request.status === "Deleted" ? "disabled" : ""}>
-                        <option value="New" ${request.status === "New" ? "selected" : ""}>New</option>
-                        <option value="In Progress" ${request.status === "In Progress" ? "selected" : ""}>In Progress</option>
-                        <option value="Resolved" ${request.status === "Resolved" ? "selected" : ""}>Resolved</option>
-                        <option value="Deleted" ${request.status === "Deleted" ? "selected" : ""}>Deleted</option>
-                    </select>
+                    <div class="inline-field">
+                        <label for="status-${originalIndex}"><strong>Change Status:</strong></label>
+                        <select id="status-${originalIndex}" ${request.status === "Deleted" ? "disabled" : ""}>
+                            <option value="New" ${request.status === "New" ? "selected" : ""}>New</option>
+                            <option value="In Progress" ${request.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                            <option value="Resolved" ${request.status === "Resolved" ? "selected" : ""}>Resolved</option>
+                            <option value="Deleted" ${request.status === "Deleted" ? "selected" : ""}>Deleted</option>
+                        </select>
+                    </div>
 
-                    <br><br>
+                    <div class="inline-field">
+                        <label for="comment-${originalIndex}"><strong>Facility Comment / Action Taken:</strong></label>
+                        <textarea id="comment-${originalIndex}" rows="4" ${request.status === "Deleted" ? "disabled" : ""}>${request.comment ? request.comment : ""}</textarea>
+                    </div>
 
-                    <label for="comment-${index}"><strong>Facility Comment / Action Taken:</strong></label><br>
-                    <textarea id="comment-${index}" rows="4" cols="50" ${request.status === "Deleted" ? "disabled" : ""}>${request.comment ? request.comment : ""}</textarea>
+                    <div class="action-buttons">
+                        <button onclick="updateRequest(${originalIndex})" ${request.status === "Deleted" ? "disabled" : ""}>Update Request</button>
+                        <button onclick="editRequest(${originalIndex})" ${request.status === "Deleted" ? "disabled" : ""}>Edit</button>
+                    </div>
 
-                    <br><br>
+                    <div class="inline-field">
+                        <label for="deleteReason-${originalIndex}"><strong>Reason to Delete:</strong></label>
+                        <textarea id="deleteReason-${originalIndex}" rows="2" ${request.status === "Deleted" ? "disabled" : ""}>${request.deleteReason ? request.deleteReason : ""}</textarea>
+                    </div>
 
-                    <button onclick="updateRequest(${index})" ${request.status === "Deleted" ? "disabled" : ""}>Update Request</button>
-                    <button onclick="editRequest(${index})" ${request.status === "Deleted" ? "disabled" : ""}>Edit</button>
-
-                    <br><br>
-
-                    <label for="deleteReason-${index}"><strong>Reason to Delete:</strong></label><br>
-                    <textarea id="deleteReason-${index}" rows="2" cols="50" ${request.status === "Deleted" ? "disabled" : ""}>${request.deleteReason ? request.deleteReason : ""}</textarea>
-
-                    <br><br>
-
-                    <button onclick="deleteRequest(${index})" ${request.status === "Deleted" ? "disabled" : ""}>Delete</button>
+                    <div class="action-buttons">
+                        <button onclick="deleteRequest(${originalIndex})" ${request.status === "Deleted" ? "disabled" : ""}>Delete</button>
+                    </div>
                 </div>
             </div>
         `;
     });
 
     requestList.innerHTML = output;
+}
+
+function renderFilteredRequests() {
+    const filteredRequests = getFilteredRequests();
+    displayRequests(filteredRequests);
+
+    const label = document.getElementById("filterLabel");
+    if (label) {
+        label.innerHTML = `<strong>Showing:</strong> ${currentFilter} Tickets`;
+    }
+}
+
+function setActiveFilterCard(status) {
+    document.querySelectorAll(".stats-card").forEach(card => {
+        card.classList.remove("active-filter");
+    });
+
+    if (status === "All") document.getElementById("filter-all").classList.add("active-filter");
+    if (status === "New") document.getElementById("filter-new").classList.add("active-filter");
+    if (status === "In Progress") document.getElementById("filter-progress").classList.add("active-filter");
+    if (status === "Resolved") document.getElementById("filter-resolved").classList.add("active-filter");
+    if (status === "Deleted") document.getElementById("filter-deleted").classList.add("active-filter");
+}
+
+function filterRequests(status) {
+    currentFilter = status;
+    setActiveFilterCard(status);
+    renderFilteredRequests();
+    requestList.scrollIntoView({ behavior: "smooth" });
+}
+
+function searchRequests() {
+    renderFilteredRequests();
+}
+
+function resetSearch() {
+    if (searchInput) {
+        searchInput.value = "";
+    }
+    currentFilter = "All";
+    setActiveFilterCard("All");
+    renderFilteredRequests();
 }
 
 function toggleDetails(index) {
@@ -76,9 +211,11 @@ function toggleDetails(index) {
 }
 
 function updateRequest(index) {
+    const updatedAssignedTo = document.getElementById(`assignedTo-${index}`).value.trim();
     const updatedStatus = document.getElementById(`status-${index}`).value;
     const updatedComment = document.getElementById(`comment-${index}`).value.trim();
 
+    requests[index].assignedTo = updatedAssignedTo;
     requests[index].status = updatedStatus;
     requests[index].comment = updatedComment;
 
@@ -118,4 +255,6 @@ function deleteRequest(index) {
     location.reload();
 }
 
-displayRequests();
+updateDashboardStats();
+setActiveFilterCard("All");
+renderFilteredRequests();
