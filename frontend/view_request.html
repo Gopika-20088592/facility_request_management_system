@@ -23,3 +23,48 @@
                     autocomplete="off"
                 >
                 <button type="button" onclick="resetSearch()">Reset</button>
+                </div>
+            <p id="filterLabel"><strong>Showing:</strong> All Tickets</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stats-card active-filter" id="filter-all" onclick="filterRequests('All')">
+                <h3>Total Requests</h3>
+                <p id="totalRequests">0</p>
+            </div>
+
+            <div class="stats-card" id="filter-new" onclick="filterRequests('New')">
+                <h3>New</h3>
+                <p id="newRequests">0</p>
+            </div>
+
+            <div class="stats-card" id="filter-progress" onclick="filterRequests('In Progress')">
+                <h3>In Progress</h3>
+                <p id="inProgressRequests">0</p>
+            </div>
+
+            <div class="stats-card" id="filter-resolved" onclick="filterRequests('Resolved')">
+                <h3>Resolved</h3>
+                <p id="resolvedRequests">0</p>
+            </div>
+
+            <div class="stats-card" id="filter-deleted" onclick="filterRequests('Deleted')">
+                <h3>Deleted</h3>
+                <p id="deletedRequests">0</p>
+            </div>
+        </div>
+
+        <div class="card chart-card">
+            <h2>Ticket Status Overview</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+
+        <div id="requestList"></div>
+
+        <a href="index.html">Back to Home</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="javascript/view_request.js"></script>
+</body>
+</html>
