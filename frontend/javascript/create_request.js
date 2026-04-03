@@ -3,6 +3,7 @@ const form = document.getElementById("requestForm");
 let editIndex = localStorage.getItem("editIndex");
 let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
 
+// If editing, fill the form with existing request data
 if (editIndex !== null) {
     const request = requests[editIndex];
 
@@ -54,10 +55,23 @@ form.addEventListener("submit", function(event) {
             submittedAt: oldRequest.submittedAt,
             status: oldRequest.status,
             comment: oldRequest.comment ? oldRequest.comment : "",
-            deleteReason: oldRequest.deleteReason ? oldRequest.deleteReason : ""
+            deleteReason: oldRequest.deleteReason ? oldRequest.deleteReason : "",
+            assignedTo: oldRequest.assignedTo ? oldRequest.assignedTo : ""
         };
     } else {
-        const requestId = "REQ" + String(requests.length + 1).padStart(3, "0");
+        let requestCounter = localStorage.getItem("requestCounter");
+
+        if (!requestCounter) {
+            requestCounter = 1;
+        } else {
+            requestCounter = parseInt(requestCounter) + 1;
+        }
+
+        localStorage.setItem("requestCounter", requestCounter);
+
+        const year = new Date().getFullYear();
+        const formattedNumber = String(requestCounter).padStart(3, "0");
+        const requestId = `REQ-${year}-${formattedNumber}`;
         const submittedAt = new Date().toLocaleString();
 
         requestData = {
@@ -71,7 +85,8 @@ form.addEventListener("submit", function(event) {
             submittedAt: submittedAt,
             status: "New",
             comment: "",
-            deleteReason: ""
+            deleteReason: "",
+            assignedTo: ""
         };
     }
 
