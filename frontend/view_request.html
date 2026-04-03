@@ -2,17 +2,24 @@
 <html>
 <head>
     <title>View Requests</title>
+    <link rel="stylesheet" href="css_styling/main.css">
+    <link rel="stylesheet" href="css_styling/view_request.css">
 </head>
 <body>
+    <div class="page-container">
+        <div class="dashboard-header">
+            <h1>Facility Team Dashboard</h1>
+            <p>All submitted requests are shown below.</p>
+        </div>
 
-    <h1>Facility Team Dashboard</h1>
-    <p>All submitted requests are shown below</p>
-
-    <div id="requestList"></div>
-
-    <br>
-    <a href="index.html">Back to Home</a>
-
-    <script src="javascript/view_request.js"></script>
-</body>
-</html>
+        <div class="card search-card top-search-card">
+            <h2>Search Tickets</h2>
+            <div class="search-row">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by Request ID"
+                    onkeyup="searchRequests()"
+                    autocomplete="off"
+                >
+                <button type="button" onclick="resetSearch()">Reset</button>
