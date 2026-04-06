@@ -39,7 +39,7 @@ def generate_request_id():
 
 @app.route("/")
 def home():
-        return "Facility Request Backend is running."    
+    return "Facility Request Backend is running."    
     
 @app.route("/requests", methods=["GET"])
 def get_requests():
@@ -68,7 +68,7 @@ def get_requests():
 
     return jsonify(request_list)
 
-@app.route("/requests/<int:request_id>, methods=["GET"])
+@app.route("/requests/<int:request_id>", methods=["GET"])
 def get_request_by_id(request_id):
     connection = get_db_connection()
     request_item = connection.execute(
@@ -98,7 +98,7 @@ def get_request_by_id(request_id):
 
     return jsonify(request_data)
 
-@app.route("/requests, methods=["POST"])
+@app.route("/requests", methods=["POST"])
 def create_request():
     data = request.get_json()
 
