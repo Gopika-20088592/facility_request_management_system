@@ -68,3 +68,33 @@ def get_requests():
         })
 
     return jsonify(request_list)
+    
+    @app.route("/requests/<int:request_id>", methods=["GET"])
+def get_request_by_id(request_id):
+    connection = get_db_connection()
+    request_item = connection.execute(
+        "SELECT * FROM requests WHERE id = ?",
+        (request_id,)
+    ).fetchone()
+    connection.close()
+
+    if request_item is None:
+        return jsonify({"message": "Request not found"}), 404
+
+    request_data = {
+        "id": request_item["id"],
+        "requestId": request_item["request_id"],
+        "employeeName": request_item["employee_name"],
+        "employeeId": request_item["employee_id"],
+        "floor": request_item["floor"],
+        "pantry": request_item["pantry"],
+        "issueType": request_item["issue_type"],
+        "description": request_item["description"],
+        "submittedAt": request_item["submitted_at"],
+        "status": request_item["status"],
+        "comment": request_item["comment"],
+        "assignedTo": request_item["assigned_to"],
+        "deleteReason": request_item["delete_reason"]
+    }
+
+    return jsonify(request_data)
