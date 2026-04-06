@@ -20,3 +20,8 @@ CREATE TABLE IF NOT EXISTS requests (
     delete_reason TEXT
 )
 """)
+
+connection.commit()
+connection.close()
+
+print("Database and requests table created successfully.")
