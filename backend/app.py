@@ -149,3 +149,43 @@ def create_request():
         "requestId": generated_request_id,
         "id": new_id
     }), 201
+
+    @app.route("/requests/<int:request_id>", methods=["PUT"])
+def update_request(request_id):
+    data = request.get_json()
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        UPDATE requests
+        SET
+            employee_name = ?,
+            employee_id = ?,
+            floor = ?,
+            pantry = ?,
+            issue_type = ?,
+            description = ?,
+            status = ?,
+            comment = ?,
+            assigned_to = ?,
+            delete_reason = ?
+        WHERE id = ?
+    """, (
+        data.get("employeeName"),
+        data.get("employeeId"),
+        data.get("floor"),
+        data.get("pantry"),
+        data.get("issueType"),
+        data.get("description"),
+        data.get("status"),
+        data.get("comment"),
+        data.get("assignedTo"),
+        data.get("deleteReason"),
+        request_id
+    ))
+
+    connection.commit()
+    connection.close()
+
+    return jsonify({"message": "Request updated successfully"}), 200
