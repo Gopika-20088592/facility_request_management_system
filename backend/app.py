@@ -36,3 +36,35 @@ def get_db_connection():
         new_number = 1
 
     return f"REQ-{current_year}-{str(new_number).zfill(3)}"
+
+    @app.route("/")
+def home():
+    return "Facility Request Backend is running."
+
+
+@app.route("/requests", methods=["GET"])
+def get_requests():
+    connection = get_db_connection()
+    requests = connection.execute("SELECT * FROM requests").fetchall()
+    connection.close()
+
+    request_list = []
+
+    for request_item in requests:
+        request_list.append({
+            "id": request_item["id"],
+            "requestId": request_item["request_id"],
+            "employeeName": request_item["employee_name"],
+            "employeeId": request_item["employee_id"],
+            "floor": request_item["floor"],
+            "pantry": request_item["pantry"],
+            "issueType": request_item["issue_type"],
+            "description": request_item["description"],
+            "submittedAt": request_item["submitted_at"],
+            "status": request_item["status"],
+            "comment": request_item["comment"],
+            "assignedTo": request_item["assigned_to"],
+            "deleteReason": request_item["delete_reason"]
+        })
+
+    return jsonify(request_list)
