@@ -11,7 +11,7 @@ def get_db_connection():
     connection.row_factory = sqlite3.Row
     return connection
 
-    def generate_request_id():
+def generate_request_id():
     connection = get_db_connection()
     cursor = connection.cursor()
 
@@ -37,11 +37,10 @@ def get_db_connection():
 
     return f"REQ-{current_year}-{str(new_number).zfill(3)}"
 
-    @app.route("/")
+@app.route("/")
 def home():
-    return "Facility Request Backend is running."
-
-
+        return "Facility Request Backend is running."    
+    
 @app.route("/requests", methods=["GET"])
 def get_requests():
     connection = get_db_connection()
@@ -69,7 +68,7 @@ def get_requests():
 
     return jsonify(request_list)
 
-    @app.route("/requests/<int:request_id>", methods=["GET"])
+@app.route("/requests/<int:request_id>, methods=["GET"])
 def get_request_by_id(request_id):
     connection = get_db_connection()
     request_item = connection.execute(
@@ -99,7 +98,7 @@ def get_request_by_id(request_id):
 
     return jsonify(request_data)
 
-    @app.route("/requests", methods=["POST"])
+@app.route("/requests, methods=["POST"])
 def create_request():
     data = request.get_json()
 
@@ -150,7 +149,7 @@ def create_request():
         "id": new_id
     }), 201
 
-    @app.route("/requests/<int:request_id>", methods=["PUT"])
+@app.route("/requests/<int:request_id>", methods=["PUT"])
 def update_request(request_id):
     data = request.get_json()
 
@@ -189,3 +188,19 @@ def update_request(request_id):
     connection.close()
 
     return jsonify({"message": "Request updated successfully"}), 200
+
+@app.route("/requests/<int:request_id>", methods=["DELETE"])
+def delete_request(request_id):
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("DELETE FROM requests WHERE id = ?", (request_id,))
+
+    connection.commit()
+    connection.close()
+
+    return jsonify({"message": "Request deleted successfully"}), 200
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
