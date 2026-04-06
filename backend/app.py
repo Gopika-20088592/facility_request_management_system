@@ -68,7 +68,7 @@ def get_requests():
         })
 
     return jsonify(request_list)
-    
+
     @app.route("/requests/<int:request_id>", methods=["GET"])
 def get_request_by_id(request_id):
     connection = get_db_connection()
@@ -98,3 +98,54 @@ def get_request_by_id(request_id):
     }
 
     return jsonify(request_data)
+
+    @app.route("/requests", methods=["POST"])
+def create_request():
+    data = request.get_json()
+
+    generated_request_id = generate_request_id()
+    submitted_at = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
+
+    connection = get_db_connection()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO requests (
+            request_id,
+            employee_name,
+            employee_id,
+            floor,
+            pantry,
+            issue_type,
+            description,
+            submitted_at,
+            status,
+            comment,
+            assigned_to,
+            delete_reason
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        generated_request_id,
+        data.get("employeeName"),
+        data.get("employeeId"),
+        data.get("floor"),
+        data.get("pantry"),
+        data.get("issueType"),
+        data.get("description"),
+        submitted_at,
+        "New",
+        "",
+        "",
+        ""
+    ))
+
+    connection.commit()
+    new_id = cursor.lastrowid
+    connection.close()
+
+    return jsonify({
+        "message": "Request created successfully",
+        "requestId": generated_request_id,
+        "id": new_id
+    }), 201
