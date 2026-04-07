@@ -1,7 +1,7 @@
 const form = document.getElementById("requestForm");
 
-let editIndex = localStorage.getItem("editIndex");
-let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
+const urlParams = new URLSearchParams(window.location.search);
+const editId = urlParams.get("id");
 
 if (editIndex !== null) {
     const request = requests[editIndex];
