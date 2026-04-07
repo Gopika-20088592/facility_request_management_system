@@ -3,16 +3,36 @@ const form = document.getElementById("requestForm");
 const urlParams = new URLSearchParams(window.location.search);
 const editId = urlParams.get("id");
 
-if (editIndex !== null) {
-    const request = requests[editIndex];
+async function loadRequestForEdit() {
+    if (!editId) {
+        return;
+    }
 
-    if (request) {
-        document.getElementById("employeeName").value = request.employeeName;
-        document.getElementById("employeeId").value = request.employeeId;
-        document.getElementById("floor").value = request.floor;
-        document.getElementById("pantry").value = request.pantry;
-        document.getElementById("issueType").value = request.issueType;
-        document.getElementById("description").value = request.description;
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/requests/${editId}`);
+        const request = await response.json();
+
+        if (response.ok && request) {
+            document.getElementById("employeeName").value = request.employeeName || "";
+            document.getElementById("employeeId").value = request.employeeId || "";
+            document.getElementById("floor").value = request.floor || "";
+            document.getElementById("pantry").value = request.pantry || "";
+            document.getElementById("issueType").value = request.issueType || "";
+            document.getElementById("description").value = request.description || "";
+
+            const heading = document.querySelector("h1");
+            if (heading) {
+                heading.textContent = "Edit Facility Request";
+            }
+
+            const submitButton = form.querySelector("button[type='submit']");
+            if (submitButton) {
+                submitButton.textContent = "Update Request";
+            }
+        }
+    } catch (error) {
+        console.error("Error loading request for edit:", error);
+        alert("Unable to load request for editing.");
     }
 }
 
