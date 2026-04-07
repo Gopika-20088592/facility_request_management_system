@@ -58,57 +58,6 @@ form.addEventListener("submit", async function(event) {
         return;
     }
 
-    let requestData;
-
-    if (editIndex !== null) {
-        const oldRequest = requests[editIndex];
-
-        requestData = {
-            requestId: oldRequest.requestId,
-            employeeName: name,
-            employeeId: employeeId,
-            floor: floor,
-            pantry: pantry,
-            issueType: issueType,
-            description: description,
-            submittedAt: oldRequest.submittedAt,
-            status: oldRequest.status,
-            comment: oldRequest.comment ? oldRequest.comment : "",
-            deleteReason: oldRequest.deleteReason ? oldRequest.deleteReason : "",
-            assignedTo: oldRequest.assignedTo ? oldRequest.assignedTo : ""
-        };
-    } else {
-        let requestCounter = localStorage.getItem("requestCounter");
-
-        if (!requestCounter) {
-            requestCounter = 1;
-        } else {
-            requestCounter = parseInt(requestCounter) + 1;
-        }
-
-        localStorage.setItem("requestCounter", requestCounter);
-
-        const year = new Date().getFullYear();
-        const formattedNumber = String(requestCounter).padStart(3, "0");
-        const requestId = `REQ-${year}-${formattedNumber}`;
-        const submittedAt = new Date().toLocaleString();
-
-        requestData = {
-            requestId: requestId,
-            employeeName: name,
-            employeeId: employeeId,
-            floor: floor,
-            pantry: pantry,
-            issueType: issueType,
-            description: description,
-            submittedAt: submittedAt,
-            status: "New",
-            comment: "",
-            deleteReason: "",
-            assignedTo: ""
-        };
-    }
-
     const detailsMessage =
         "Please verify the below details:\n\n" +
         "Employee Name: " + name +
@@ -125,7 +74,61 @@ form.addEventListener("submit", async function(event) {
         return;
     }
 
+    if (editId) {
         try {
+            const oldResponse = await fetch(`http://127.0.0.1:5000/requests/${editId}`);
+            const oldRequest = await oldResponse.json();
+            
+            if (!oldResponse.ok) {
+                alert("Unable to load request for update.");
+                return;
+            }
+            
+            const requestData = {
+                employeeName: name,
+                employeeId: employeeId,
+                floor: floor,
+                pantry: pantry,
+                issueType: issueType,
+                description: description,
+                status: oldRequest.status || "New",
+                comment: oldRequest.comment ? oldRequest.comment : "",
+                deleteReason: oldRequest.deleteReason ? oldRequest.deleteReason : "",
+                assignedTo: oldRequest.assignedTo ? oldRequest.assignedTo : ""
+             };
+             
+            const response = await fetch(`http://127.0.0.1:5000/requests/${editId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(requestData)
+            });
+            
+            if (response.ok) {
+                sessionStorage.setItem("editSuccessTicketId", editId);
+                sessionStorage.setItem("editSuccessMessage", "Request updated successfully!");
+                window.location.replace(`./view_request.html?openId=${editId}`);
+            } else {
+                alert("Error updating request.");
+            }
+        } catch (error) {
+            console.error("Error updating request:", error);
+            alert("Server error. Make sure backend is running.");
+        }
+        return;
+    }
+    
+    const requestData = {
+        employeeName: name,
+        employeeId: employeeId,
+        floor: floor,
+        pantry: pantry,
+        issueType: issueType,
+        description: description
+    };
+    
+    try {
         const response = await fetch("http://127.0.0.1:5000/requests", {
             method: "POST",
             headers: {
@@ -152,3 +155,6 @@ form.addEventListener("submit", async function(event) {
         console.error("Error submitting request:", error);
         alert("Server error. Make sure backend is running.");
     }
+});
+
+loadRequestForEdit();
