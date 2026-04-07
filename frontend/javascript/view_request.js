@@ -1,9 +1,23 @@
 const requestList = document.getElementById("requestList");
 const searchInput = document.getElementById("searchInput");
 
-let requests = JSON.parse(localStorage.getItem("facilityRequests")) || [];
+let requests = [];
 let currentFilter = "All";
 let statusChartInstance = null;
+
+async function loadRequests() {
+    try {
+        const response = await fetch("http://127.0.0.1:5000/requests");
+        requests = await response.json();
+
+        updateDashboardStats();
+        setActiveFilterCard(currentFilter);
+        renderFilteredRequests();
+    } catch (error) {
+        console.error("Error fetching requests:", error);
+        requestList.innerHTML = "<p>Error loading requests.</p>";
+    }
+}
 
 function updateDashboardStats() {
     const total = requests.length;
@@ -95,8 +109,8 @@ function displayRequests(data) {
     let output = "";
 
     data.forEach(function(request) {
-        const originalIndex = requests.findIndex(r => r.requestId === request.requestId);
         const statusClass = getStatusClass(request.status);
+        const requestId = request.id;
 
         output += `
             <div class="card request-summary">
@@ -104,9 +118,9 @@ function displayRequests(data) {
                 <p><strong>Submitted At:</strong> ${request.submittedAt ? request.submittedAt : "N/A"}</p>
                 <p><strong>Status:</strong> <span class="status-text ${statusClass}">${request.status ? request.status : "New"}</span></p>
 
-                <button onclick="toggleDetails(${originalIndex})">Open Request</button>
+                <button onclick="toggleDetails(${requestId})">Open Request</button>
 
-                <div id="details-${originalIndex}" class="request-details" style="display:none;">
+                <div id="details-${requestId}" class="request-details" style="display:none;">
                     <p><strong>Employee Name:</strong> ${request.employeeName}</p>
                     <p><strong>Employee ID:</strong> ${request.employeeId}</p>
                     <p><strong>Floor:</strong> ${request.floor}</p>
@@ -118,13 +132,13 @@ function displayRequests(data) {
                     <p><strong>Delete Reason:</strong> ${request.deleteReason ? request.deleteReason : "Not deleted"}</p>
 
                     <div class="inline-field">
-                        <label for="assignedTo-${originalIndex}"><strong>Assign To:</strong></label>
-                        <input type="text" id="assignedTo-${originalIndex}" value="${request.assignedTo ? request.assignedTo : ""}" ${request.status === "Deleted" ? "disabled" : ""}>
+                        <label for="assignedTo-${requestId}"><strong>Assign To:</strong></label>
+                        <input type="text" id="assignedTo-${requestId}" value="${request.assignedTo ? request.assignedTo : ""}" ${request.status === "Deleted" ? "disabled" : ""}>
                     </div>
 
                     <div class="inline-field">
-                        <label for="status-${originalIndex}"><strong>Change Status:</strong></label>
-                        <select id="status-${originalIndex}" ${request.status === "Deleted" ? "disabled" : ""}>
+                        <label for="status-${requestId}"><strong>Change Status:</strong></label>
+                        <select id="status-${requestId}" ${request.status === "Deleted" ? "disabled" : ""}>
                             <option value="New" ${request.status === "New" ? "selected" : ""}>New</option>
                             <option value="In Progress" ${request.status === "In Progress" ? "selected" : ""}>In Progress</option>
                             <option value="Resolved" ${request.status === "Resolved" ? "selected" : ""}>Resolved</option>
@@ -133,22 +147,22 @@ function displayRequests(data) {
                     </div>
 
                     <div class="inline-field">
-                        <label for="comment-${originalIndex}"><strong>Facility Comment / Action Taken:</strong></label>
-                        <textarea id="comment-${originalIndex}" rows="4" ${request.status === "Deleted" ? "disabled" : ""}>${request.comment ? request.comment : ""}</textarea>
+                        <label for="comment-${requestId}"><strong>Facility Comment / Action Taken:</strong></label>
+                        <textarea id="comment-${requestId}" rows="4" ${request.status === "Deleted" ? "disabled" : ""}>${request.comment ? request.comment : ""}</textarea>
                     </div>
 
                     <div class="action-buttons">
-                        <button onclick="updateRequest(${originalIndex})" ${request.status === "Deleted" ? "disabled" : ""}>Update Request</button>
-                        <button onclick="editRequest(${originalIndex})" ${request.status === "Deleted" ? "disabled" : ""}>Edit</button>
+                        <button onclick="updateRequest(${requestId})" ${request.status === "Deleted" ? "disabled" : ""}>Update Request</button>
+                        <button onclick="editRequest(${requestId})" ${request.status === "Deleted" ? "disabled" : ""}>Edit</button>
                     </div>
 
                     <div class="inline-field">
-                        <label for="deleteReason-${originalIndex}"><strong>Reason to Delete:</strong></label>
-                        <textarea id="deleteReason-${originalIndex}" rows="2" ${request.status === "Deleted" ? "disabled" : ""}>${request.deleteReason ? request.deleteReason : ""}</textarea>
+                        <label for="deleteReason-${requestId}"><strong>Reason to Delete:</strong></label>
+                        <textarea id="deleteReason-${requestId}" rows="2" ${request.status === "Deleted" ? "disabled" : ""}>${request.deleteReason ? request.deleteReason : ""}</textarea>
                     </div>
 
                     <div class="action-buttons">
-                        <button onclick="deleteRequest(${originalIndex})" ${request.status === "Deleted" ? "disabled" : ""}>Delete</button>
+                        <button onclick="deleteRequest(${requestId})" ${request.status === "Deleted" ? "disabled" : ""}>Delete</button>
                     </div>
                 </div>
             </div>
@@ -210,19 +224,46 @@ function toggleDetails(index) {
     }
 }
 
-function updateRequest(index) {
-    const updatedAssignedTo = document.getElementById(`assignedTo-${index}`).value.trim();
-    const updatedStatus = document.getElementById(`status-${index}`).value;
-    const updatedComment = document.getElementById(`comment-${index}`).value.trim();
+async function updateRequest(id) {
+    const request = requests.find(item => item.id === id);
 
-    requests[index].assignedTo = updatedAssignedTo;
-    requests[index].status = updatedStatus;
-    requests[index].comment = updatedComment;
+    const updatedAssignedTo = document.getElementById(`assignedTo-${id}`).value.trim();
+    const updatedStatus = document.getElementById(`status-${id}`).value;
+    const updatedComment = document.getElementById(`comment-${id}`).value.trim();
+    const updatedDeleteReason = document.getElementById(`deleteReason-${id}`).value.trim();
 
-    localStorage.setItem("facilityRequests", JSON.stringify(requests));
+    const updatedData = {
+        employeeName: request.employeeName,
+        employeeId: request.employeeId,
+        floor: request.floor,
+        pantry: request.pantry,
+        issueType: request.issueType,
+        description: request.description,
+        status: updatedStatus,
+        comment: updatedComment,
+        assignedTo: updatedAssignedTo,
+        deleteReason: updatedDeleteReason
+    };
 
-    alert("Request updated successfully!");
-    location.reload();
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        if (response.ok) {
+            alert("Request updated successfully!");
+            await loadRequests();
+        } else {
+            alert("Error updating request.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Server error while updating request.");
+    }
 }
 
 function editRequest(index) {
@@ -255,6 +296,4 @@ function deleteRequest(index) {
     location.reload();
 }
 
-updateDashboardStats();
-setActiveFilterCard("All");
-renderFilteredRequests();
+loadRequests();

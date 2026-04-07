@@ -95,7 +95,7 @@ form.addEventListener("submit", async function(event) {
                 comment: oldRequest.comment ? oldRequest.comment : "",
                 deleteReason: oldRequest.deleteReason ? oldRequest.deleteReason : "",
                 assignedTo: oldRequest.assignedTo ? oldRequest.assignedTo : ""
-             };
+            };
              
             const response = await fetch(`http://127.0.0.1:5000/requests/${editId}`, {
                 method: "PUT",
