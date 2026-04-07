@@ -36,7 +36,7 @@ async function loadRequestForEdit() {
     }
 }
 
-form.addEventListener("submit", function(event) {
+form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const name = document.getElementById("employeeName").value.trim();
@@ -110,7 +110,7 @@ form.addEventListener("submit", function(event) {
     }
 
     const detailsMessage =
-        "Please verify your request details:\n\n" +
+        "Please verify the below details:\n\n" +
         "Employee Name: " + name +
         "\nEmployee ID: " + employeeId +
         "\nFloor: " + floor +
@@ -125,25 +125,30 @@ form.addEventListener("submit", function(event) {
         return;
     }
 
-    if (editIndex !== null) {
-        requests[editIndex] = requestData;
-        localStorage.setItem("facilityRequests", JSON.stringify(requests));
-        localStorage.removeItem("editIndex");
+        try {
+        const response = await fetch("http://127.0.0.1:5000/requests", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+        });
 
-        alert("Request updated successfully!");
-        form.reset();
-        window.location.href = "view_request.html";
-    } else {
-        requests.push(requestData);
-        localStorage.setItem("facilityRequests", JSON.stringify(requests));
+        const result = await response.json();
 
-        alert(
-            "Your request has been submitted successfully!\n\n" +
-            "Request ID: " + requestData.requestId +
-            "\n\nPlease use this ID for future follow-up."
-        );
+        if (response.ok) {
+            alert(
+                "Your request has been submitted successfully!\n\n" +
+                "Request ID: " + result.requestId +
+                "\n\nPlease use this ID for future follow-up."
+            );
 
-        form.reset();
-        window.location.href = "index.html";
+            form.reset();
+            window.location.replace("./index.html");
+        } else {
+            alert("Error submitting request.");
+        }
+    } catch (error) {
+        console.error("Error submitting request:", error);
+        alert("Server error. Make sure backend is running.");
     }
-});
