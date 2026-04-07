@@ -266,9 +266,8 @@ async function updateRequest(id) {
     }
 }
 
-function editRequest(index) {
-    localStorage.setItem("editIndex", index);
-    window.location.href = "create_request.html";
+function editRequest(id) {
+    window.location.href = `./create_request.html?id=${id}`;
 }
 
 function deleteRequest(index) {
