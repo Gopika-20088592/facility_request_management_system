@@ -2,7 +2,7 @@ const requestList = document.getElementById("requestList");
 const searchInput = document.getElementById("searchInput");
 
 let requests = [];
-let currentFilter = "All";
+let currentFilter = "All"
 let statusChartInstance = null;
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -10,9 +10,32 @@ let openIdFromUrl = urlParams.get("openId");
 let currentOpenedTicketId = openIdFromUrl ? Number(openIdFromUrl) : null;
 
 function clearHighlights() {
+
+    
     document.querySelectorAll(".request-summary").forEach(card => {
         card.classList.remove("highlight-ticket");
     });
+}
+
+function showInlineMessage(id, text, type = "success") {
+    const box = document.getElementById(`msg-${id}`);
+
+    if (!box) return;
+
+    box.textContent = text;
+    box.className = "inline-message";
+
+    if (type === "success") {
+        box.classList.add("inline-success");
+    } else {
+        box.classList.add("inline-error");
+    }
+
+    box.style.display = "block";
+
+    setTimeout(() => {
+        box.style.display = "none";
+    }, 4000);
 }
 
 async function loadRequests() {
