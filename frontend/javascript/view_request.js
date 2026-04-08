@@ -5,6 +5,10 @@ let requests = [];
 let currentFilter = "All";
 let statusChartInstance = null;
 
+const urlParams = new URLSearchParams(window.location.search);
+let openIdFromUrl = urlParams.get("openId");
+let currentOpenedTicketId = openIdFromUrl ? Number(openIdFromUrl) : null;
+
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
