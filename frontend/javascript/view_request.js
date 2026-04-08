@@ -38,6 +38,28 @@ function showInlineMessage(id, text, type = "success") {
     }, 4000);
 }
 
+function openTicketById(ticketId) {
+    if (!ticketId) {
+        return;
+    }
+
+    setTimeout(() => {
+        clearHighlights();
+
+        const detailsDiv = document.getElementById(`details-${ticketId}`);
+        const cardDiv = document.getElementById(`card-${ticketId}`);
+
+        if (detailsDiv) {
+            detailsDiv.style.display = "block";
+        }
+
+        if (cardDiv) {
+            cardDiv.classList.add("highlight-ticket");
+            cardDiv.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    }, 100);
+}
+
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
