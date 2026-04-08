@@ -270,8 +270,9 @@ function editRequest(id) {
     window.location.href = `./create_request.html?id=${id}`;
 }
 
-function deleteRequest(index) {
-    const reason = document.getElementById(`deleteReason-${index}`).value.trim();
+async function deleteRequest(id) {
+    const request = requests.find(item => item.id === id);
+    const reason = document.getElementById(`deleteReason-${id}`).value.trim();
 
     if (reason === "") {
         alert("Please enter a reason before deleting the request.");
@@ -286,13 +287,36 @@ function deleteRequest(index) {
         return;
     }
 
-    requests[index].status = "Deleted";
-    requests[index].deleteReason = reason;
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                employeeName: request.employeeName,
+                employeeId: request.employeeId,
+                floor: request.floor,
+                pantry: request.pantry,
+                issueType: request.issueType,
+                description: request.description,
+                status: "Deleted",
+                comment: request.comment,
+                assignedTo: request.assignedTo,
+                deleteReason: reason
+            })
+        });
 
-    localStorage.setItem("facilityRequests", JSON.stringify(requests));
-
-    alert("Request marked as deleted successfully!");
-    location.reload();
+        if (response.ok) {
+            alert("Request deleted successfully!");
+            await loadRequests();
+        } else {
+            alert("Error deleting request.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Server error while deleting request.");
+    }
 }
 
 loadRequests();
