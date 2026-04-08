@@ -9,6 +9,12 @@ const urlParams = new URLSearchParams(window.location.search);
 let openIdFromUrl = urlParams.get("openId");
 let currentOpenedTicketId = openIdFromUrl ? Number(openIdFromUrl) : null;
 
+function clearHighlights() {
+    document.querySelectorAll(".request-summary").forEach(card => {
+        card.classList.remove("highlight-ticket");
+    });
+}
+
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
