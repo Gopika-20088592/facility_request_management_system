@@ -60,6 +60,21 @@ function openTicketById(ticketId) {
     }, 100);
 }
 
+function openRequestedTicketFromUrl() {
+    if (!openIdFromUrl) {
+        return;
+    }
+
+    const ticketId = Number(openIdFromUrl);
+    currentOpenedTicketId = ticketId;
+    openTicketById(ticketId);
+
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+
+    openIdFromUrl = null;
+}
+
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
