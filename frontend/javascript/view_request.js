@@ -311,13 +311,27 @@ function resetSearch() {
     renderFilteredRequests();
 }
 
-function toggleDetails(index) {
-    const detailsDiv = document.getElementById(`details-${index}`);
+function toggleDetails(id) {
+    const detailsDiv = document.getElementById(`details-${id}`);
+    const cardDiv = document.getElementById(`card-${id}`);
 
     if (detailsDiv.style.display === "none") {
+        clearHighlights();
         detailsDiv.style.display = "block";
+        cardDiv.classList.add("highlight-ticket");
+        currentOpenedTicketId = id;
     } else {
         detailsDiv.style.display = "none";
+        cardDiv.classList.remove("highlight-ticket");
+
+        const msgBox = document.getElementById(`msg-${id}`);
+        if (msgBox) {
+            msgBox.style.display = "none";
+        }
+
+        if (currentOpenedTicketId === id) {
+            currentOpenedTicketId = null;
+        }
     }
 }
 
