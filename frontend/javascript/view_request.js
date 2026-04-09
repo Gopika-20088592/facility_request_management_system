@@ -295,6 +295,11 @@ function filterRequests(status) {
     currentFilter = status;
     setActiveFilterCard(status);
     renderFilteredRequests();
+    
+    if (currentOpenedTicketId) {
+        openTicketById(currentOpenedTicketId);
+    }
+    
     requestList.scrollIntoView({ behavior: "smooth" });
 }
 
