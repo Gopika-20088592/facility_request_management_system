@@ -208,7 +208,7 @@ function displayRequests(data) {
         const requestId = request.id;
 
         output += `
-            <div class="card request-summary">
+            <div class="card request-summary" id="card-${requestId}">
                 <p><strong>Request ID:</strong> ${request.requestId ? request.requestId : "N/A"}</p>
                 <p><strong>Submitted At:</strong> ${request.submittedAt ? request.submittedAt : "N/A"}</p>
                 <p><strong>Status:</strong> <span class="status-text ${statusClass}">${request.status ? request.status : "New"}</span></p>
@@ -216,6 +216,8 @@ function displayRequests(data) {
                 <button onclick="toggleDetails(${requestId})">Open Request</button>
 
                 <div id="details-${requestId}" class="request-details" style="display:none;">
+                <div id="msg-${requestId}" class="inline-message"></div>
+
                     <p><strong>Employee Name:</strong> ${request.employeeName}</p>
                     <p><strong>Employee ID:</strong> ${request.employeeId}</p>
                     <p><strong>Floor:</strong> ${request.floor}</p>
