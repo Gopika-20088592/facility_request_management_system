@@ -10,8 +10,6 @@ let openIdFromUrl = urlParams.get("openId");
 let currentOpenedTicketId = openIdFromUrl ? Number(openIdFromUrl) : null;
 
 function clearHighlights() {
-
-    
     document.querySelectorAll(".request-summary").forEach(card => {
         card.classList.remove("highlight-ticket");
     });
@@ -102,8 +100,7 @@ async function loadRequests() {
         
         if (openIdFromUrl) {
             openRequestedTicketFromUrl();
-        } 
-        else if (currentOpenedTicketId) {
+        } else if (currentOpenedTicketId) {
             openTicketById(currentOpenedTicketId);
         }
         
@@ -315,9 +312,14 @@ function resetSearch() {
     if (searchInput) {
         searchInput.value = "";
     }
+
     currentFilter = "All";
     setActiveFilterCard("All");
     renderFilteredRequests();
+
+    if (currentOpenedTicketId) {
+        openTicketById(currentOpenedTicketId);
+    }
 }
 
 function toggleDetails(id) {
