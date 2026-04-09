@@ -216,7 +216,7 @@ function displayRequests(data) {
                 <button onclick="toggleDetails(${requestId})">Open Request</button>
 
                 <div id="details-${requestId}" class="request-details" style="display:none;">
-                <div id="msg-${requestId}" class="inline-message"></div>
+                    <div id="msg-${requestId}" class="inline-message"></div>
 
                     <p><strong>Employee Name:</strong> ${request.employeeName}</p>
                     <p><strong>Employee ID:</strong> ${request.employeeId}</p>
@@ -305,6 +305,10 @@ function filterRequests(status) {
 
 function searchRequests() {
     renderFilteredRequests();
+    
+    if (currentOpenedTicketId) {
+        openTicketById(currentOpenedTicketId);
+    }
 }
 
 function resetSearch() {
