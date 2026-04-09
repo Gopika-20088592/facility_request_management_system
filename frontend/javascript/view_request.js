@@ -2,7 +2,7 @@ const requestList = document.getElementById("requestList");
 const searchInput = document.getElementById("searchInput");
 
 let requests = [];
-let currentFilter = "All"
+let currentFilter = "All";
 let statusChartInstance = null;
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -357,6 +357,8 @@ async function updateRequest(id) {
     };
 
     try {
+        currentOpenedTicketId = id;
+
         const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
             method: "PUT",
             headers: {
@@ -364,16 +366,29 @@ async function updateRequest(id) {
             },
             body: JSON.stringify(updatedData)
         });
-
+        
         if (response.ok) {
-            alert("Request updated successfully!");
             await loadRequests();
+            
+            setTimeout(() => {
+                openTicketById(id);
+                showInlineMessage(id, "Request updated successfully!");
+            }, 200);
+        
         } else {
-            alert("Error updating request.");
+            
+            setTimeout(() => {
+                openTicketById(id);
+                showInlineMessage(id, "Error updating request.", "error");
+            }, 200);
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Server error while updating request.");
+        
+        setTimeout(() => {
+            openTicketById(id);
+            showInlineMessage(id, "Server error while updating request.", "error");
+        }, 200);
     }
 }
 
@@ -399,6 +414,8 @@ async function deleteRequest(id) {
     }
 
     try {
+        currentOpenedTicketId = id;
+
         const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
             method: "PUT",
             headers: {
@@ -417,16 +434,28 @@ async function deleteRequest(id) {
                 deleteReason: reason
             })
         });
-
+        
         if (response.ok) {
-            alert("Request deleted successfully!");
             await loadRequests();
+            
+            setTimeout(() => {
+                openTicketById(id);
+                showInlineMessage(id, "Request deleted successfully!");
+            }, 200);
+        
         } else {
-            alert("Error deleting request.");
+            setTimeout(() => {
+                openTicketById(id);
+                showInlineMessage(id, "Error deleting request.", "error");
+            }, 200);
         }
     } catch (error) {
         console.error("Error:", error);
-        alert("Server error while deleting request.");
+        
+        setTimeout(() => {
+            openTicketById(id);
+            showInlineMessage(id, "Server error while deleting request.", "error");
+        }, 200);
     }
 }
 
