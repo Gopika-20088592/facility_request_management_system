@@ -75,6 +75,22 @@ function openRequestedTicketFromUrl() {
     openIdFromUrl = null;
 }
 
+function showEditSuccessMessageFromRedirect() {
+    const ticketId = sessionStorage.getItem("editSuccessTicketId");
+    const message = sessionStorage.getItem("editSuccessMessage");
+
+    if (!ticketId || !message) {
+        return;
+    }
+
+    setTimeout(() => {
+        openTicketById(Number(ticketId));
+        showInlineMessage(Number(ticketId), message, "success");
+        sessionStorage.removeItem("editSuccessTicketId");
+        sessionStorage.removeItem("editSuccessMessage");
+    }, 200);
+}
+
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
