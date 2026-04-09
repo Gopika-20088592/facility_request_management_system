@@ -99,6 +99,15 @@ async function loadRequests() {
         updateDashboardStats();
         setActiveFilterCard(currentFilter);
         renderFilteredRequests();
+        
+        if (openIdFromUrl) {
+            openRequestedTicketFromUrl();
+        } 
+        else if (currentOpenedTicketId) {
+            openTicketById(currentOpenedTicketId);
+        }
+        
+        showEditSuccessMessageFromRedirect();
     } catch (error) {
         console.error("Error fetching requests:", error);
         requestList.innerHTML = "<p>Error loading requests.</p>";
