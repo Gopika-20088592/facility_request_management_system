@@ -89,21 +89,12 @@ function showRequests() {
     `).join("");
 }
 
-function setActiveFilterCard(status) {
-    document.querySelectorAll(".stats-card").forEach(card => {
-        card.classList.remove("active-filter");
-    });
-
-    if (status === "All") document.getElementById("filter-all").classList.add("active-filter");
-    if (status === "New") document.getElementById("filter-new").classList.add("active-filter");
-    if (status === "In Progress") document.getElementById("filter-progress").classList.add("active-filter");
-    if (status === "Resolved") document.getElementById("filter-resolved").classList.add("active-filter");
-    if (status === "Deleted") document.getElementById("filter-deleted").classList.add("active-filter");
-}
-
 function filterRequests(status) {
     currentFilter = status;
-    setActiveFilterCard(status);
+    document.getElementById("filterLabel").innerHTML = "<strong>Showing:</strong> " + (status === "All" ? "All Tickets" : status + " Tickets");
+    document.querySelectorAll(".stats-card").forEach(card => card.classList.remove("active-filter"));
+    const cardMap = { "All": "filter-all", "New": "filter-new", "In Progress": "filter-progress", "Resolved": "filter-resolved", "Deleted": "filter-deleted" };
+    document.getElementById(cardMap[status]).classList.add("active-filter");
     showRequests();
 }
 
@@ -112,14 +103,14 @@ function searchRequests() {
 }
 
 function resetSearch() {
-    if (searchInput) {
-        searchInput.value = "";
-    }
-
+    searchInput.value = "";
     currentFilter = "All";
-    setActiveFilterCard("All");
+    document.getElementById("filterLabel").innerHTML = "<strong>Showing:</strong> All Tickets";
+    document.querySelectorAll(".stats-card").forEach(card => card.classList.remove("active-filter"));
+    document.getElementById("filter-all").classList.add("active-filter");
     showRequests();
 }
+
 function toggleDetails(id) {
     const details = document.getElementById(`details-${id}`);
     details.style.display = details.style.display === "none" ? "block" : "none";
