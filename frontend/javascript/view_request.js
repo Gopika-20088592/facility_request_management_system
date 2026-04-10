@@ -1,10 +1,8 @@
 const requestList = document.getElementById("requestList");
 const searchInput = document.getElementById("searchInput");
-const sortOption = document.getElementById("sortOption");
 
 let requests = [];
 let currentFilter = "All";
-let statusChartInstance = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 let openIdFromUrl = urlParams.get("openId");
@@ -164,84 +162,6 @@ function updateDashboardStats() {
     document.getElementById("resolvedRequests").textContent = resolvedCount;
     document.getElementById("deletedRequests").textContent = deletedCount;
 
-    createStatusChart(newCount, inProgressCount, resolvedCount, deletedCount);
-}
-
-function createStatusChart(newCount, inProgressCount, resolvedCount, deletedCount) {
-    const ctx = document.getElementById("statusChart").getContext("2d");
-
-    if (statusChartInstance) {
-        statusChartInstance.destroy();
-    }
-
-    statusChartInstance = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ["New", "In Progress", "Resolved", "Deleted"],
-            datasets: [{
-                label: "Tickets",
-                data: [newCount, inProgressCount, resolvedCount, deletedCount],
-                backgroundColor: [
-                    "#1565c0",
-                    "#ef6c00",
-                    "#2e7d32",
-                    "#c62828"
-                ],
-                borderColor: [
-                    "#1565c0",
-                    "#ef6c00",
-                    "#2e7d32",
-                    "#c62828"
-                ],
-                borderWidth: 1,
-                borderRadius: 6
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            }
-        }
-    });
-}
-
-function sortRequests(data) {
-    const sortValue = sortOption ? sortOption.value : "latest";
-    let sortedRequests = [...data];
-
-    if (sortValue === "latest") {
-        sortedRequests.sort((a, b) => b.id - a.id);
-    } else if (sortValue === "oldest") {
-        sortedRequests.sort((a, b) => a.id - b.id);
-    } else if (sortValue === "requestIdAsc") {
-        sortedRequests.sort((a, b) => a.requestId.localeCompare(b.requestId));
-    } else if (sortValue === "requestIdDesc") {
-        sortedRequests.sort((a, b) => b.requestId.localeCompare(a.requestId));
-    } else if (sortValue === "priorityHigh") {
-        sortedRequests.sort((a, b) =>
-            getPriorityWeight(b.submittedAt, b.status) -
-            getPriorityWeight(a.submittedAt, a.status)
-        );
-    } else if (sortValue === "priorityLow") {
-        sortedRequests.sort((a, b) =>
-            getPriorityWeight(a.submittedAt, a.status) -
-            getPriorityWeight(b.submittedAt, b.status)
-        );
-    }
-
-    return sortedRequests;
 }
 
 function getFilteredRequests() {
@@ -396,10 +316,6 @@ function searchRequests() {
 function resetSearch() {
     if (searchInput) {
         searchInput.value = "";
-    }
-
-    if (sortOption) {
-        sortOption.value = "latest";
     }
 
     currentFilter = "All";
