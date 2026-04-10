@@ -14,27 +14,6 @@ function clearHighlights() {
     });
 }
 
-function showInlineMessage(id, text, type = "success") {
-    const box = document.getElementById(`msg-${id}`);
-
-    if (!box) return;
-
-    box.textContent = text;
-    box.className = "inline-message";
-
-    if (type === "success") {
-        box.classList.add("inline-success");
-    } else {
-        box.classList.add("inline-error");
-    }
-
-    box.style.display = "block";
-
-    setTimeout(() => {
-        box.style.display = "none";
-    }, 4000);
-}
-
 function openTicketById(ticketId) {
     if (!ticketId) {
         return;
@@ -175,7 +154,6 @@ function displayRequests(data) {
                 <button onclick="toggleDetails(${requestId})">Open Request</button>
 
                 <div id="details-${requestId}" class="request-details" style="display:none;">
-                    <div id="msg-${requestId}" class="inline-message"></div>
 
                     <p><strong>Employee Name:</strong> ${request.employeeName}</p>
                     <p><strong>Employee ID:</strong> ${request.employeeId}</p>
@@ -341,25 +319,14 @@ async function updateRequest(id) {
         });
         
         if (response.ok) {
-            await loadRequests();
-            
-            setTimeout(() => {
-                openTicketById(id);
-                showInlineMessage(id, "Request updated successfully!");
-            }, 200);
+            alert("Request updated successfully!");
+            loadRequests();
         } else {
-            setTimeout(() => {
-                openTicketById(id);
-                showInlineMessage(id, "Error updating request.", "error");
-            }, 200);
+            alert("Error updating request.");
         }
     } catch (error) {
         console.error("Error:", error);
-        
-        setTimeout(() => {
-            openTicketById(id);
-            showInlineMessage(id, "Server error while updating request.", "error");
-        }, 200);
+        alert("Server error while updating request.");
     }
 }
 
@@ -407,25 +374,14 @@ async function deleteRequest(id) {
         });
         
         if (response.ok) {
-            await loadRequests();
-            
-            setTimeout(() => {
-                openTicketById(id);
-                showInlineMessage(id, "Request deleted successfully!");
-            }, 200);
+            alert("Request deleted successfully!");
+            loadRequests();
         } else {
-            setTimeout(() => {
-                openTicketById(id);
-                showInlineMessage(id, "Error deleting request.", "error");
-            }, 200);
+            alert("Error deleting request.");
         }
     } catch (error) {
         console.error("Error:", error);
-        
-        setTimeout(() => {
-            openTicketById(id);
-            showInlineMessage(id, "Server error while deleting request.", "error");
-        }, 200);
+        alert("Server error while deleting request.");
     }
 }
 
