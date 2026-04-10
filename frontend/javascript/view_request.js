@@ -119,26 +119,20 @@ function toggleDetails(id) {
 async function updateRequest(id) {
     const request = requests.find(item => item.id === id);
 
-    const updatedAssignedTo = document.getElementById(`assignedTo-${id}`).value.trim();
-    const updatedStatus = document.getElementById(`status-${id}`).value;
-    const updatedComment = document.getElementById(`comment-${id}`).value.trim();
-    const updatedDeleteReason = document.getElementById(`deleteReason-${id}`).value.trim();
-
     const updatedData = {
-        employeeName: request.employeeName,
-        employeeId: request.employeeId,
-        floor: request.floor,
-        pantry: request.pantry,
-        issueType: request.issueType,
-        description: request.description,
-        status: updatedStatus,
-        comment: updatedComment,
-        assignedTo: updatedAssignedTo,
-        deleteReason: updatedDeleteReason
+        employeeName : request.employeeName,
+        employeeId   : request.employeeId,
+        floor        : request.floor,
+        pantry       : request.pantry,
+        issueType    : request.issueType,
+        description  : request.description,
+        status       : document.getElementById(`status-${id}`).value,
+        comment      : document.getElementById(`comment-${id}`).value.trim(),
+        assignedTo   : document.getElementById(`assignedTo-${id}`).value.trim(),
+        deleteReason : document.getElementById(`deleteReason-${id}`).value.trim()
     };
 
     try {
-
         const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
             method: "PUT",
             headers: {
@@ -154,7 +148,6 @@ async function updateRequest(id) {
             alert("Error updating request.");
         }
     } catch (error) {
-        console.error("Error:", error);
         alert("Server error while updating request.");
     }
 }
@@ -163,21 +156,11 @@ async function deleteRequest(id) {
     const request = requests.find(item => item.id === id);
     const reason = document.getElementById(`deleteReason-${id}`).value.trim();
 
-    if (reason === "") {
-        alert("Please enter a reason before deleting the request.");
-        return;
-    }
+    if (!reason) { alert("Please enter a reason before deleting."); return; }
 
-    const confirmDelete = confirm(
-        "Are you sure you want to delete this request?\n\nReason: " + reason
-    );
-
-    if (!confirmDelete) {
-        return;
-    }
+    if (!confirm("Are you sure you want to delete this request?")) return;
 
     try {
-
         const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
             method: "PUT",
             headers: {
@@ -204,14 +187,8 @@ async function deleteRequest(id) {
             alert("Error deleting request.");
         }
     } catch (error) {
-        console.error("Error:", error);
         alert("Server error while deleting request.");
     }
 }
 
 loadRequests();
-setInterval(() => {
-    if (requests.length > 0) {
-        renderFilteredRequests();
-    }
-}, 60000);
