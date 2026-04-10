@@ -180,7 +180,21 @@ function createStatusChart(newCount, inProgressCount, resolvedCount, deletedCoun
             labels: ["New", "In Progress", "Resolved", "Deleted"],
             datasets: [{
                 label: "Tickets",
-                data: [newCount, inProgressCount, resolvedCount, deletedCount]
+                data: [newCount, inProgressCount, resolvedCount, deletedCount],
+                backgroundColor: [
+                    "#1565c0",
+                    "#ef6c00",
+                    "#2e7d32",
+                    "#c62828"
+                ],
+                borderColor: [
+                    "#1565c0",
+                    "#ef6c00",
+                    "#2e7d32",
+                    "#c62828"
+                ],
+                borderWidth: 1,
+                borderRadius: 6
             }]
         },
         options: {
@@ -460,9 +474,7 @@ async function updateRequest(id) {
                 openTicketById(id);
                 showInlineMessage(id, "Request updated successfully!");
             }, 200);
-        
         } else {
-            
             setTimeout(() => {
                 openTicketById(id);
                 showInlineMessage(id, "Error updating request.", "error");
@@ -528,7 +540,6 @@ async function deleteRequest(id) {
                 openTicketById(id);
                 showInlineMessage(id, "Request deleted successfully!");
             }, 200);
-        
         } else {
             setTimeout(() => {
                 openTicketById(id);
@@ -546,3 +557,8 @@ async function deleteRequest(id) {
 }
 
 loadRequests();
+setInterval(() => {
+    if (requests.length > 0) {
+        renderFilteredRequests();
+    }
+}, 60000);
