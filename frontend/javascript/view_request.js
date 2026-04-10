@@ -4,63 +4,6 @@ const searchInput = document.getElementById("searchInput");
 let requests = [];
 let currentFilter = "All";
 
-const urlParams = new URLSearchParams(window.location.search);
-let openIdFromUrl = urlParams.get("openId");
-let currentOpenedTicketId = openIdFromUrl ? Number(openIdFromUrl) : null;
-
-function openTicketById(ticketId) {
-    if (!ticketId) {
-        return;
-    }
-
-    setTimeout(() => {
-        clearHighlights();
-
-        const detailsDiv = document.getElementById(`details-${ticketId}`);
-        const cardDiv = document.getElementById(`card-${ticketId}`);
-
-        if (detailsDiv) {
-            detailsDiv.style.display = "block";
-        }
-
-        if (cardDiv) {
-            cardDiv.classList.add("highlight-ticket");
-            cardDiv.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-    }, 100);
-}
-
-function openRequestedTicketFromUrl() {
-    if (!openIdFromUrl) {
-        return;
-    }
-
-    const ticketId = Number(openIdFromUrl);
-    currentOpenedTicketId = ticketId;
-    openTicketById(ticketId);
-
-    const cleanUrl = window.location.pathname;
-    window.history.replaceState({}, document.title, cleanUrl);
-
-    openIdFromUrl = null;
-}
-
-function showEditSuccessMessageFromRedirect() {
-    const ticketId = sessionStorage.getItem("editSuccessTicketId");
-    const message = sessionStorage.getItem("editSuccessMessage");
-
-    if (!ticketId || !message) {
-        return;
-    }
-
-    setTimeout(() => {
-        openTicketById(Number(ticketId));
-        showInlineMessage(Number(ticketId), message, "success");
-        sessionStorage.removeItem("editSuccessTicketId");
-        sessionStorage.removeItem("editSuccessMessage");
-    }, 200);
-}
-
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
@@ -69,14 +12,7 @@ async function loadRequests() {
         updateDashboardStats();
         setActiveFilterCard(currentFilter);
         renderFilteredRequests();
-        
-        if (openIdFromUrl) {
-            openRequestedTicketFromUrl();
-        } else if (currentOpenedTicketId) {
-            openTicketById(currentOpenedTicketId);
-        }
-        
-        showEditSuccessMessageFromRedirect();
+
     } catch (error) {
         console.error("Error fetching requests:", error);
         requestList.innerHTML = "<p>Error loading requests.</p>";
@@ -226,20 +162,10 @@ function filterRequests(status) {
     currentFilter = status;
     setActiveFilterCard(status);
     renderFilteredRequests();
-    
-    if (currentOpenedTicketId) {
-        openTicketById(currentOpenedTicketId);
-    }
-    
-    requestList.scrollIntoView({ behavior: "smooth" });
 }
 
 function searchRequests() {
     renderFilteredRequests();
-    
-    if (currentOpenedTicketId) {
-        openTicketById(currentOpenedTicketId);
-    }
 }
 
 function resetSearch() {
@@ -250,10 +176,6 @@ function resetSearch() {
     currentFilter = "All";
     setActiveFilterCard("All");
     renderFilteredRequests();
-
-    if (currentOpenedTicketId) {
-        openTicketById(currentOpenedTicketId);
-    }
 }
 function toggleDetails(id) {
     const details = document.getElementById(`details-${id}`);
