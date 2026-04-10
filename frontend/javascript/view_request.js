@@ -114,13 +114,13 @@ function displayRequests(data) {
                         <label for="comment-${requestId}"><strong>Facility Comment / Action Taken:</strong></label>
                         <textarea id="comment-${requestId}" rows="4" ${request.status === "Deleted" ? "disabled" : ""}>${request.comment ? request.comment : ""}</textarea>
                     </div>
-
+                    
                     <div class="action-buttons">
-                        <button onclick="updateRequest(${requestId})" ${request.status === "Deleted" ? "disabled" : ""}>Update Request</button>
-                        <button onclick="editRequest(${requestId})" ${request.status === "Deleted" ? "disabled" : ""}>Edit</button>
+                    <button onclick="updateRequest(${requestId})" ${request.status === "Deleted" ? "disabled" : ""}>Update Request</button>
                     </div>
 
-                    <div class="inline-field">
+                    <div class="inlo
+                    heeine-field">
                         <label for="deleteReason-${requestId}"><strong>Reason to Delete:</strong></label>
                         <textarea id="deleteReason-${requestId}" rows="2" ${request.status === "Deleted" ? "disabled" : ""}>${request.deleteReason ? request.deleteReason : ""}</textarea>
                     </div>
@@ -223,10 +223,6 @@ async function updateRequest(id) {
         console.error("Error:", error);
         alert("Server error while updating request.");
     }
-}
-
-function editRequest(id) {
-    window.location.href = `./create_request.html?id=${id}`;
 }
 
 async function deleteRequest(id) {
