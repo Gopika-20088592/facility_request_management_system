@@ -88,45 +88,6 @@ function showEditSuccessMessageFromRedirect() {
     }, 200);
 }
 
-function getPriorityStatus(submittedAt, status) {
-    if (status === "Deleted" || status === "Resolved") {
-        return null;
-    }
-
-    if (!submittedAt) {
-        return { label: "Normal", class: "priority-normal" };
-    }
-
-    const createdTime = new Date(submittedAt).getTime();
-    const currentTime = new Date().getTime();
-
-    if (isNaN(createdTime)) {
-        return { label: "Normal", class: "priority-normal" };
-    }
-
-    const diffMinutes = (currentTime - createdTime) / (1000 * 60);
-
-    if (diffMinutes > 60) {
-        return { label: "Overdue", class: "priority-overdue" };
-    } else if (diffMinutes > 30) {
-        return { label: "Urgent", class: "priority-urgent" };
-    } else {
-        return { label: "Normal", class: "priority-normal" };
-    }
-}
-
-function getPriorityWeight(submittedAt, status) {
-    const priority = getPriorityStatus(submittedAt, status);
-    
-    if (!priority) {
-        return -1;
-    }
-    
-    if (priority.label === "Overdue") return 3;
-    if (priority.label === "Urgent") return 2;
-    return 1;
-}
-
 async function loadRequests() {
     try {
         const response = await fetch("http://127.0.0.1:5000/requests");
@@ -204,16 +165,12 @@ function displayRequests(data) {
     data.forEach(function (request) {
         const requestId = request.id;
         const statusClass = getStatusClass(request.status);
-        const priority = getPriorityStatus(request.submittedAt, request.status);
 
         output += `
             <div class="card request-summary" id="card-${requestId}">
                 <p><strong>Request ID:</strong> ${request.requestId ? request.requestId : "N/A"}</p>
                 <p><strong>Submitted At:</strong> ${request.submittedAt ? request.submittedAt : "N/A"}</p>
                 <p><strong>Status:</strong> <span class="status-text ${statusClass}">${request.status ? request.status : "New"}</span></p>
-                ${priority ? `
-                <p><strong>Priority:</strong> <span class="priority-badge ${priority.class}">${priority.label}</span></p>
-                ` : ""}
 
                 <button onclick="toggleDetails(${requestId})">Open Request</button>
 
