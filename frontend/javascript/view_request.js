@@ -8,12 +8,6 @@ const urlParams = new URLSearchParams(window.location.search);
 let openIdFromUrl = urlParams.get("openId");
 let currentOpenedTicketId = openIdFromUrl ? Number(openIdFromUrl) : null;
 
-function clearHighlights() {
-    document.querySelectorAll(".request-summary").forEach(card => {
-        card.classList.remove("highlight-ticket");
-    });
-}
-
 function openTicketById(ticketId) {
     if (!ticketId) {
         return;
@@ -146,7 +140,7 @@ function displayRequests(data) {
         const statusClass = getStatusClass(request.status);
 
         output += `
-            <div class="card request-summary" id="card-${requestId}">
+            <div class="card request-summary">
                 <p><strong>Request ID:</strong> ${request.requestId ? request.requestId : "N/A"}</p>
                 <p><strong>Submitted At:</strong> ${request.submittedAt ? request.submittedAt : "N/A"}</p>
                 <p><strong>Status:</strong> <span class="status-text ${statusClass}">${request.status ? request.status : "New"}</span></p>
@@ -261,29 +255,9 @@ function resetSearch() {
         openTicketById(currentOpenedTicketId);
     }
 }
-
 function toggleDetails(id) {
-    const detailsDiv = document.getElementById(`details-${id}`);
-    const cardDiv = document.getElementById(`card-${id}`);
-
-    if (detailsDiv.style.display === "none") {
-        clearHighlights();
-        detailsDiv.style.display = "block";
-        cardDiv.classList.add("highlight-ticket");
-        currentOpenedTicketId = id;
-    } else {
-        detailsDiv.style.display = "none";
-        cardDiv.classList.remove("highlight-ticket");
-
-        const msgBox = document.getElementById(`msg-${id}`);
-        if (msgBox) {
-            msgBox.style.display = "none";
-        }
-
-        if (currentOpenedTicketId === id) {
-            currentOpenedTicketId = null;
-        }
-    }
+    const details = document.getElementById(`details-${id}`);
+    details.style.display = details.style.display === "none" ? "block" : "none";
 }
 
 async function updateRequest(id) {
@@ -308,7 +282,6 @@ async function updateRequest(id) {
     };
 
     try {
-        currentOpenedTicketId = id;
 
         const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
             method: "PUT",
@@ -352,7 +325,6 @@ async function deleteRequest(id) {
     }
 
     try {
-        currentOpenedTicketId = id;
 
         const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
             method: "PUT",
