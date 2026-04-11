@@ -92,6 +92,47 @@ class TestFacilityRequestApp(unittest.TestCase):
         result = json.loads(response.data)
         self.assertEqual(result["message"], "Request updated successfully")
 
+    def test_05_delete_request(self):
+        data = {
+            "employeeName": "Test Employee",
+            "employeeId": "EMP004",
+            "floor": "Floor 1",
+            "pantry": "Pantry A",
+            "issueType": "Cleaning Required",
+            "description": "Needs cleaning"
+        }
+        post_response = self.client.post(
+            "/requests",
+            json=data,
+            headers={"Content-Type": "application/json"}
+        )
+        request_id = json.loads(post_response.data).get("id")
+
+        # then soft delete it
+        delete_data = {
+            "employeeName": "Test Employee",
+            "employeeId": "EMP004",
+            "floor": "Floor 1",
+            "pantry": "Pantry A",
+            "issueType": "Cleaning Required",
+            "description": "Needs cleaning",
+            "status": "Deleted",
+            "comment": "",
+            "assignedTo": "",
+            "deleteReason": "Request raised by mistake"
+        }
+        response = self.client.put(
+            f"/requests/{request_id}",
+            json=delete_data,
+            headers={"Content-Type": "application/json"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+        # verify status is Deleted
+        get_response = self.client.get(f"/requests/{request_id}")
+        result = json.loads(get_response.data)
+        self.assertEqual(result["status"], "Deleted")
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
 
