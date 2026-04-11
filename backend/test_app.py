@@ -33,6 +33,28 @@ class TestFacilityRequestApp(unittest.TestCase):
         result = json.loads(response.data)
         self.assertIsInstance(result, list)
 
+    def test_03_read_single_request(self):
+        data = {
+            "employeeName": "Test Employee",
+            "employeeId": "EMP002",
+            "floor": "Floor 2",
+            "pantry": "Pantry B",
+            "issueType": "Milk Refill",
+            "description": "Need milk refill"
+        }
+        post_response = self.client.post(
+            "/requests",
+            json=data,
+            headers={"Content-Type": "application/json"}
+        )
+        request_id = json.loads(post_response.data).get("id")
+
+        # then read it
+        response = self.client.get(f"/requests/{request_id}")
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        self.assertEqual(result["employeeName"], "Test Employee")
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
 
