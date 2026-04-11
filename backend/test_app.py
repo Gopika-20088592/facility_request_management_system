@@ -27,6 +27,12 @@ class TestFacilityRequestApp(unittest.TestCase):
         result = json.loads(response.data)
         self.assertIn("requestId", result)
 
+    def test_02_read_all_requests(self):
+        response = self.client.get("/requests")
+        self.assertEqual(response.status_code, 200)
+        result = json.loads(response.data)
+        self.assertIsInstance(result, list)
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
 
