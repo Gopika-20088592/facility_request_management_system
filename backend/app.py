@@ -13,6 +13,29 @@ def get_db_connection():
     return connection
 
 
+def init_db():
+    connection = get_db_connection()
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            request_id TEXT,
+            employee_name TEXT,
+            employee_id TEXT,
+            floor TEXT,
+            pantry TEXT,
+            issue_type TEXT,
+            description TEXT,
+            submitted_at TEXT,
+            status TEXT,
+            comment TEXT,
+            assigned_to TEXT,
+            delete_reason TEXT
+        )
+    """)
+    connection.commit()
+    connection.close()
+
+
 def generate_request_id():
     connection = get_db_connection()
     cursor = connection.cursor()
@@ -196,4 +219,5 @@ def update_request(request_id):
     return jsonify({"message": "Request updated successfully"}), 200
 
 if __name__ == "__main__":
+    init_db()
     app.run(debug=True)
