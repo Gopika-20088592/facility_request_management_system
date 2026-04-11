@@ -3,22 +3,15 @@ const form = document.getElementById("requestForm");
 form.addEventListener("submit", async function(event) {
     event.preventDefault();
 
-    const name = document.getElementById("employeeName").value.trim();
+    const employeeName = document.getElementById("employeeName").value.trim();
     const employeeId = document.getElementById("employeeId").value.trim();
     const floor = document.getElementById("floor").value.trim();
     const pantry = document.getElementById("pantry").value.trim();
     const issueType = document.getElementById("issueType").value;
     const description = document.getElementById("description").value.trim();
 
-    if (
-        name === "" ||
-        employeeId === "" ||
-        floor === "" ||
-        pantry === "" ||
-        issueType === "" ||
-        description === ""
-    ) {
-        alert("Please fill in all fields before submitting the request.");
+    if (!employeeName || !employeeId || !floor || !pantry || !issueType || !description) {
+        alert("Please fill in all fields.");
         return;
     }
 
