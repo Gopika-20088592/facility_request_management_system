@@ -24,4 +24,4 @@ CREATE TABLE IF NOT EXISTS requests (
 connection.commit()
 connection.close()
 
-print("Database and requests table created successfully.")
+print("Database and table created successfully!")

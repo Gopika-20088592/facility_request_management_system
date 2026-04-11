@@ -6,10 +6,12 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
+
 def get_db_connection():
     connection = sqlite3.connect("facility_requests.db")
     connection.row_factory = sqlite3.Row
     return connection
+
 
 def generate_request_id():
     connection = get_db_connection()
@@ -37,10 +39,12 @@ def generate_request_id():
 
     return f"REQ-{current_year}-{str(new_number).zfill(3)}"
 
+
 @app.route("/")
 def home():
-    return "Facility Request Backend is running."    
-    
+    return "Facility Request Backend is running."
+
+
 @app.route("/requests", methods=["GET"])
 def get_requests():
     connection = get_db_connection()
@@ -67,6 +71,7 @@ def get_requests():
         })
 
     return jsonify(request_list)
+
 
 @app.route("/requests/<int:request_id>", methods=["GET"])
 def get_request_by_id(request_id):
@@ -95,8 +100,8 @@ def get_request_by_id(request_id):
         "assignedTo": request_item["assigned_to"],
         "deleteReason": request_item["delete_reason"]
     }
-
     return jsonify(request_data)
+
 
 @app.route("/requests", methods=["POST"])
 def create_request():
@@ -149,6 +154,7 @@ def create_request():
         "id": new_id
     }), 201
 
+
 @app.route("/requests/<int:request_id>", methods=["PUT"])
 def update_request(request_id):
     data = request.get_json()
@@ -188,19 +194,6 @@ def update_request(request_id):
     connection.close()
 
     return jsonify({"message": "Request updated successfully"}), 200
-
-@app.route("/requests/<int:request_id>", methods=["DELETE"])
-def delete_request(request_id):
-    connection = get_db_connection()
-    cursor = connection.cursor()
-
-    cursor.execute("DELETE FROM requests WHERE id = ?", (request_id,))
-
-    connection.commit()
-    connection.close()
-
-    return jsonify({"message": "Request deleted successfully"}), 200
-
 
 if __name__ == "__main__":
     app.run(debug=True)
