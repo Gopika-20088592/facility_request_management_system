@@ -170,12 +170,12 @@ Tests include:
 
 ## Deployment (AWS EC2 + NGINX)
 Steps Followed:
-*EC2 Ubuntu instance created
-*Backend Flask app deployed
-*Port 5000 opened in security group
-*NGINX configured as reverse proxy
-*Frontend served via NGINX
-*GitHub repository cloned into server
+* EC2 Ubuntu instance created
+* Backend Flask app deployed
+* Port 5000 opened in security group
+* NGINX configured as reverse proxy
+* Frontend served via NGINX
+* GitHub repository cloned into server
 
 ## Improvements Made
 
