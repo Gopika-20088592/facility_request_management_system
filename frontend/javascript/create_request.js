@@ -26,7 +26,7 @@ form.addEventListener("submit", async function(event) {
     )) return;
     
     try {
-        const response = await fetch("http://127.0.0.1:5000/requests", {
+        const response = await fetch("http://34.224.215.71:5000/requests", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ employeeName, employeeId, floor, pantry, issueType, description })
