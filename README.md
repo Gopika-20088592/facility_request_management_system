@@ -61,6 +61,7 @@ http://34.224.215.71:5000
 
 ## Project Structure
 
+```id="v4p3yd"
 FACILITY_REQUEST_MANAGEMENT/
 │
 ├── backend/
@@ -85,7 +86,7 @@ FACILITY_REQUEST_MANAGEMENT/
 │   └── view_request.html
 │
 └── README.md
-
+```
 ---
 
 ## Core Features
