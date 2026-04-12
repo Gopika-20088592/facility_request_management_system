@@ -6,7 +6,7 @@ let currentFilter = "All";
 
 async function loadRequests() {
     try {
-        const response = await fetch("http://127.0.0.1:5000/requests");
+        const response = await fetch("http://34.224.215.71:5000/requests");
         requests = await response.json();
         updateCounts();
         showRequests();
@@ -133,7 +133,7 @@ async function updateRequest(id) {
     };
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
+        const response = await fetch(`http://34.224.215.71:5000/requests/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -161,7 +161,7 @@ async function deleteRequest(id) {
     if (!confirm("Are you sure you want to delete this request?")) return;
 
     try {
-        const response = await fetch(`http://127.0.0.1:5000/requests/${id}`, {
+        const response = await fetch(`http://34.224.215.71:5000/requests/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
