@@ -1,65 +1,219 @@
-# facility_request_management_system
-
-## Project Overview
-
-This project is based on the **Design and Development of a Facility Service Request Management System for NTT Data Organisation**.
-
-The idea for this system comes from real-world experience. While working in the organization, several issues were observed related to pantry and facility services. Common problems included items like tea, coffee, sugar, or cups running out, and employees had to inform the facility team through calls or messages.
-
-Since this communication was informal, there was:
-
-* No proper tracking system
-* Delays in resolving issues
-* Lack of transparency
-
-To solve this, the project aims to develop a **simple web-based system** where:
-
-* Employees can raise facility or pantry-related requests
-* Requests can be tracked efficiently
-* Facility teams can manage and update request statuses
-
-The system helps improve:
-
-* Communication
-* Tracking
-* Transparency
-* Efficiency in handling facility service requests
+# Facility Request Management System
 
 ---
 
-## Live Deployment
+## Project Overview
 
-The application is deployed on AWS EC2 and configured using NGINX.
+The **Facility Request Management System** is a web-based application designed to manage and track facility-related requests within an organization.
 
-**Live URL:**
+The system allows users to create, view, search, filter, update, and manage requests efficiently. It replaces informal communication methods such as calls and messages with a structured and trackable system.
+
+The application follows a full-stack approach, integrating frontend, backend, and database components. It is designed with a focus on simplicity, usability, and maintainability.
+
+---
+
+## 1. Problem Statement
+
+In organizations, facility-related issues such as pantry items (tea, coffee, sugar, cups) running out were managed informally through calls or messages.
+
+This led to:
+
+* No proper tracking of requests
+* Delays in resolving issues
+* Lack of transparency
+* No record of past requests
+
+A centralized system was required to efficiently manage and track facility service requests.
+
+---
+
+## 2. Proposed Solution
+
+To address this problem, a web-based **Facility Request Management System** was developed.
+
+The system provides an interface where users can:
+
+* Create new facility requests
+* View all requests
+* Search requests
+* Filter requests by status
+* Update request status
+* Perform soft delete
+
+---
+
+## 3. System Requirements
+
+### 3.1 Functional Requirements
+
+* Add new facility requests
+* View all requests
+* Update request status
+* Soft delete requests
+* Search requests by keyword
+* Filter requests based on status
+
+---
+
+## 4. CRUD Operations
+
+### Facility Request Management
+
+* **Create:** Add a new request
+* **Read:** View all requests
+* **Update:** Modify request status
+* **Delete:** Soft delete (mark as Deleted instead of removing)
+
+---
+
+## 5. Additional Features
+
+* Search functionality using JavaScript
+* Filter requests by status
+* Soft delete for maintaining logs and transparency
+* Dynamic data display using JavaScript
+
+---
+
+## 6. Non-Functional Requirements
+
+### 6.1 Usability
+
+* Simple and user-friendly interface
+* Easy navigation
+* Clear display of request data
+
+### 6.2 Performance
+
+* Fast API response
+* Efficient data rendering
+
+### 6.3 Reliability
+
+* Data stored securely in SQLite
+* No data loss due to soft delete
+
+### 6.4 Maintainability
+
+* Clear separation of frontend and backend
+* Organized and modular code structure
+
+---
+
+## 7. Data Requirements and Storage
+
+### 7.1 Entity: Facility Request
+
+Each record contains:
+
+* Request ID (Primary Key)
+* Description
+* Status
+* Date
+
+### 7.2 Database
+
+* SQLite is used as the database
+* Data is stored in a table called `requests`
+* Each request is stored with a unique ID and status to allow tracking and updates
+
+---
+
+## 8. System Architecture
+
+The system follows a client-server architecture:
+
+* **Frontend:** HTML, CSS, JavaScript
+* **Backend:** Flask (Python)
+* **Database:** SQLite
+
+The frontend communicates with the backend using **Fetch API to call REST APIs**.
+
+This separation improves scalability, maintainability, and ensures clear data flow between components.
+
+---
+
+## 9. API Endpoints
+
+| Method | Endpoint              | Description                           |
+| ------ | --------------------- | ------------------------------------- |
+| GET    | /requests             | Fetch all requests                    |
+| POST   | /requests             | Create a new request                  |
+| PUT    | /requests/<id>        | Update request details/status         |
+| PUT    | /requests/delete/<id> | Soft delete (mark request as Deleted) |
+
+---
+
+## 10. System Workflow
+
+1. User enters request details in the frontend
+2. JavaScript collects input data
+3. A request is sent to the backend using Fetch API
+4. The backend processes the request
+5. The backend interacts with the SQLite database
+6. The database stores or retrieves data
+7. The backend sends a response in JSON format
+8. The frontend updates the user interface
+
+---
+
+## 11. Technologies Used
+
+### Frontend
+
+* HTML – structure of the application
+* CSS – styling and layout
+* JavaScript – user interaction and API communication
+
+### Backend
+
+* Python – backend development
+* Flask – REST API development
+* Flask-CORS – enables frontend-backend communication
+
+### Database
+
+* SQLite – data storage
+
+### API
+
+* REST API – communication using HTTP methods like GET, POST, and PUT
+
+### Testing
+
+* Python unittest – testing basic operations
+
+---
+
+## 12. Testing
+
+The following operations were tested:
+
+* Creating a request
+* Retrieving requests
+* Updating request status
+* Soft deleting a request
+* Full system workflow
+
+Basic validation was also checked to ensure correct data handling.
+
+To run tests:
+
+cd backend
+python test_app.py
+
+---
+
+## 13. Deployment
+
+The application is deployed on AWS EC2 with NGINX.
+
+Access URL:
 http://34.224.215.71:5000
 
 ---
 
-## Technologies Used
-
-### Frontend
-
-* HTML
-* CSS
-* JavaScript
-
-### Backend
-
-* Python (Flask)
-
-### Database
-
-* SQLite (`facility_requests.db`)
-
-### Deployment
-
-* AWS EC2 (Ubuntu)
-* NGINX (for serving frontend)
-
----
-
-## Project Structure
+## 14. Project Structure
 
 ```id="v4p3yd"
 FACILITY_REQUEST_MANAGEMENT/
@@ -87,110 +241,32 @@ FACILITY_REQUEST_MANAGEMENT/
 │
 └── README.md
 ```
----
 
-## Core Features
+## 15. Use of AI and External Resources
 
-* Create a new facility request
-* View all requests
-* Search requests using keywords
-* Filter requests by status:
+### AI Usage
 
-  * New
-  * In Progress
-  * Resolved
-  * Deleted
+AI tools such as ChatGPT were used to:
 
-### Soft Delete Functionality
+* Understand concepts like REST APIs and Flask
+* Assist in structuring code
+* Debug errors and improve implementation
+* Guide the development process
 
-* Requests are not permanently removed from the database
-* Instead, their status is updated to **"Deleted"**
-* This ensures data is preserved and can be reviewed later
+All outputs were tested and verified.
 
----
+### External Resources
 
-## System Workflow
-
-1. User submits a request through the frontend
-2. JavaScript sends data using Fetch API
-3. Flask backend processes the request
-4. Data is stored in SQLite database
-5. Backend returns response in JSON format
-6. Frontend displays updated request list
-7. Search and filter are applied using JavaScript
+* W3Schools – HTML, CSS, JavaScript concepts
+* Flask Documentation – backend and API development
+* SQLite Documentation – database handling
 
 ---
 
-## API Endpoints
+## 16. Conclusion
 
-| Method | Endpoint              | Description                           |
-| ------ | --------------------- | ------------------------------------- |
-| GET    | /requests             | Fetch all requests                    |
-| POST   | /requests             | Create a new request                  |
-| PUT    | /requests/<id>        | Update request details/status         |
-| PUT    | /requests/delete/<id> | Soft delete (mark request as Deleted) |
+This project demonstrates a complete full-stack application integrating frontend, backend, and database components.
 
----
-
-## Key Concepts Used
-
-### Frontend
-
-* DOM Manipulation
-* Fetch API
-* JavaScript array methods:
-
-  * `filter()`
-  * `forEach()`
-
-### Backend
-
-* Flask routing
-* REST API development
-* JSON handling
-
-### Database
-
-* SQLite for storing request data
-
----
-
-## Testing
-
-Unit testing is implemented using Python `unittest`:
-
-backend/test_app.py
-
-Tests include:
-
-* Creating a request
-* Fetching all requests
-
----
-
-## Deployment (AWS EC2 + NGINX)
-Steps Followed:
-* EC2 Ubuntu instance created
-* Backend Flask app deployed
-* Port 5000 opened in security group
-* NGINX configured as reverse proxy
-* Frontend served via NGINX
-* GitHub repository cloned into server
-
-## Improvements Made
-
-* Simplified code for better readability
-* Focused on essential features
-* Improved search and filter logic
-* Organized project into frontend and backend
-
----
-
-## Future Enhancements
-
-* User authentication system
-* Admin dashboard
-* Advanced filtering options
-* Improved UI/UX
+It provides a simple and effective solution for managing facility requests, improving tracking, transparency, and efficiency compared to manual methods.
 
 ---
