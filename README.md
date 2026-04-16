@@ -68,10 +68,21 @@ The system provides an interface where users can:
 
 ## 5. Additional Features
 
-* Search functionality using JavaScript
-* Filter requests by status
-* Soft delete for maintaining logs and transparency
-* Dynamic data display using JavaScript
+* Create a new facility request
+* View all requests
+* Search requests using keywords
+* Filter requests by status:
+
+  * New
+  * In Progress
+  * Resolved
+  * Deleted
+
+### Soft Delete Functionality
+
+* Requests are not permanently removed from the database
+* Instead, their status is updated to **"Deleted"**
+* This ensures data is preserved and can be reviewed later
 
 ---
 
@@ -262,8 +273,14 @@ All outputs were tested and verified.
 * SQLite Documentation – database handling
 
 ---
+## 16. Future Enhancements
 
-## 16. Conclusion
+* User authentication system
+* Admin dashboard
+* Advanced filtering options
+* Improved UI/UX
+
+## 17. Conclusion
 
 This project demonstrates a complete full-stack application integrating frontend, backend, and database components.
 
