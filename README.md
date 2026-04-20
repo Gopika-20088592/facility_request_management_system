@@ -257,12 +257,17 @@ FACILITY_REQUEST_MANAGEMENT/
 
 ### AI Usage
 
-AI tools such as ChatGPT were used to:
+AI tools such as ChatGPT & Claude.ai were used to:
 
 * Understand concepts like REST APIs and Flask
 * Assist in structuring code
 * Debug errors and improve implementation
 * Guide the development process
+
+**Links**
+1. https://chatgpt.com/share/69e21cf5-f0f0-838b-96f4-b16aedb62c04
+2. https://claude.ai/share/857287e6-263a-4b4f-9bdd-35ca59bfe8af
+3. https://chatgpt.com/share/69e21c9f-3ad0-8330-b075-cee00e9a7d60
 
 All outputs were tested and verified.
 
